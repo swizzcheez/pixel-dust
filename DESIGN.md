@@ -22,5 +22,19 @@ This has the feel of a webapp.  The game needs to facilitate:
 These all sound like RESTful services.
 
 So, it comes down to web platform then.  To help reduce risk, I'm going to
-use Python.
+use Python since I know it well.
+
+The major platforms I'm most familar with in Python are Django and Flask.
+One consideration is hosting on GAE, which I haven't done in a while.  GAE
+most directly supports Django, but I really like Flask's simplified style
+and Jinja2's flexibility.
+
+Based on [this article]
+(http://f.souza.cc/2010/08/flying-with-flask-on-google-app-engine.html), 
+I'm going to assume I can deploy Flask on GAE, but this is an early risk 
+area so **it should be vetted right away as part of setting up the 
+environment**.
+
+Choosing GAE also handles the database, deployment, and scalability 
+questions easily.
 
