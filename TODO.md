@@ -18,6 +18,8 @@ FEAT | CRIT | Player-UI | Create UI for player
 Final Release
 -------------
 
+TYPE | SEVERITY | ID | Summary
+------|----|----|----
 FEAT | CRIT | Puzzle-Random | Create randomizer for puzzles
 FEAT | WANT | Puzzle-Search | Creaet search for puzzles
 ARCH | WANT | Design-Scoreboard | Design the scoreboard feature
