@@ -6,7 +6,6 @@ Prototype Release
 
 TYPE | SEVERITY | ID | Summary
 ------|----|----|----
-ARCH | CRIT | Flask-GAE | Vet GAE with Flask
 ARCH | CRIT | Env-Setup | Setup environment and page layout
 ARCH | CRIT | DB-Puzzle | Create puzzle model(s)
 FEAT | CRIT | Editor-URL | Create URLs for puzzle editor
