@@ -1,0 +1,47 @@
+
+.pixel-palette
+{
+    width: 3em;
+    height: 3em;
+    border: solid 1px silver;
+    opacity: 50%;
+    cursor: pointer;
+}
+
+.pixel-palette[selected]
+{
+    border: solid 1px gray;
+    opacity: 100%;
+}
+
+.playfield
+{
+    position: relative;
+}
+
+.pixel-area
+{
+}
+
+.pixel
+{
+    position: absolute;
+    height: 50%;
+    width: 50%;
+    border: solid 1px black;
+    cursor: pointer;
+}
+
+.pixel-scoreboard
+{
+    position: absolute;
+    top: 0%;
+    visibility: hidden;
+    z-index: 9999;
+}
+
+.pixel-area:hover > .pixel-scoreboard
+{
+    visibility: visible;
+}
+

@@ -7,9 +7,6 @@ Prototype Release
 TYPE | SEVERITY | ID | Summary
 ------|----|----|----
 ARCH | CRIT | DB-Puzzle | Create puzzle model(s)
-FEAT | CRIT | Player-URL | Create URLs for player
-FEAT | CRIT | Player-UI | Create UI for player
-FEAT | CRIT | Editor-URL | Create URLs for puzzle editor
 FEAT | CRIT | Editor-Store | Implement puzzle storage API
 
 Final Release
@@ -18,6 +15,7 @@ Final Release
 TYPE | SEVERITY | ID | Summary
 ------|----|----|----
 FEAT | CRIT | Puzzle-Random | Create randomizer for puzzles
+FEAT | CRIT | Editor-URL | Create URLs for puzzle editor
 FEAT | WANT | Editor-UI | Create simple UI for editor
 FEAT | WANT | Editor-UI-Color | Improve editor with colors
 FEAT | WANT | Editor-UI-Advanced | Improve editor with advanced edit

@@ -2,27 +2,18 @@
 
 {% block style_block %}
 <style>
-.puzzle-color
-{
-    width: 4em;
-    height: 4em;
-    border: solid 1px black;
-}
+@import url(/static/site/player.css);
 </style>
 {% endblock %}
 
 {% block content %}
 <div class='puzzle-player' src='{{ puzzle_url }}'>
-    <style></style>
     <ul class='inline'></ul>
-    <table></table>
-    <button class='btn'>Check</button>
+    <div class='playfield'
+        style='width: 320px; height: 320px'></div>
 </div>
 {% endblock %}
 
 {% block tail_script %}
 <script src='/static/site/player.js'></script>
-<script>
-    $('.puzzle-player').player()
-</script>
 {% endblock %}
