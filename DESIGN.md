@@ -38,3 +38,26 @@ environment**.
 Choosing GAE also handles the database, deployment, and scalability 
 questions easily.
 
+URL Design
+==========
+
+Puzzle Storage
+--------------
+
+* / or index
+  * GET returns a summary indicating how to edit (if logged in) or play a game
+* puzzle/random?...
+  * GET will redirect to puzzle player of random puzzle that matches criteria
+* puzzle/AUTHOR
+  * GET returns a list of puzzles for that author (in either JSON or HTML)
+  * POST adds a new puzzle for that author
+* puzzle/AUTHOR/ID
+  * GET of */json produces the board information
+  * GET of HTML redirects to .../player
+  * PUT updates the stored board
+  * .../player
+    * GET returns a game board that uses the puzzle/AUTHOR/ID
+  * .../editor
+    * GET returns a board editor for that puzzle/AUTHOR/ID
+
+Scoreboard will be designed if I have time.
