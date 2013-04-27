@@ -1,0 +1,26 @@
+{% extends "base.html" %}
+
+{% block content %}
+<table class='table table-bordered table-striped'>
+<thead>
+    <tr>
+        <th>Name</th>
+        <th>Created</th>
+        <th>Updated</th>
+    </tr>
+</thead>
+<tbody>
+    <h1>Puzzles created by {{ author }}</h1>
+    {% for solution in solutions %}
+    {% else %}
+    <tr><td colspan='3'>No puzzles created yet.</td></tr>
+    {% endfor %}
+
+</tbody>
+</table>
+
+<form class='form' action='{{ url_for("author_puzzle_edit", author=author) }}'>
+    <button class='btn btn-primary'>Create Puzzle</button>
+</form>
+{% endblock %}
+

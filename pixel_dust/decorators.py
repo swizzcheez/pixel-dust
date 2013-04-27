@@ -30,3 +30,4 @@ def admin_required(func):
             return func(*args, **kwargs)
         return redirect(users.create_login_url(request.url))
     return decorated_view
+

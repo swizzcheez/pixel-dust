@@ -18,7 +18,7 @@ class PuzzleSolution(ndb.Model):
     description = ndb.TextProperty(required=True)
     width = ndb.IntegerProperty(required=True)
     height = ndb.IntegerProperty(required=True)
-    added_by = ndb.UserProperty()
+    author = ndb.UserProperty()
     created = ndb.DateTimeProperty(auto_now_add=True)
     updated = ndb.DateTimeProperty(auto_now=True)
 
