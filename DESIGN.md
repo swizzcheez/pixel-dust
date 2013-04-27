@@ -35,6 +35,9 @@ I'm going to assume I can deploy Flask on GAE, but this is an early risk
 area so **it should be vetted right away as part of setting up the 
 environment**.
 
+-- It turned out that [this worked out
+easier](https://github.com/kamalgill/flask-appengine-template).
+
 Choosing GAE also handles the database, deployment, and scalability 
 questions easily.
 
