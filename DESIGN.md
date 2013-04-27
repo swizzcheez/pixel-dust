@@ -51,16 +51,16 @@ Puzzle Storage
   * GET returns a summary indicating how to edit (if logged in) or play a game
 * puzzle/random?...
   * GET will redirect to puzzle player of random puzzle that matches criteria
-* puzzle/AUTHOR
-  * GET returns a list of puzzles for that author (in either JSON or HTML)
+* puzzle/GROUP
+  * GET returns a list of puzzles for that group (in either JSON or HTML)
   * POST adds a new puzzle for that author
-* puzzle/AUTHOR/ID
+* puzzle/GROUP/ID
   * GET of */json produces the board information
   * GET of HTML redirects to .../player
   * PUT updates the stored board
   * .../player
-    * GET returns a game board that uses the puzzle/AUTHOR/ID
+    * GET returns a game board that uses the puzzle/GROUP/ID
   * .../editor
-    * GET returns a board editor for that puzzle/AUTHOR/ID
+    * GET returns a board editor for that puzzle/GROUP/ID
 
 Scoreboard will be designed if I have time.

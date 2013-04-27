@@ -1,0 +1,28 @@
+{% extends "base.html" %}
+
+{% block style_block %}
+<style>
+.puzzle-color
+{
+    width: 4em;
+    height: 4em;
+    border: solid 1px black;
+}
+</style>
+{% endblock %}
+
+{% block content %}
+<div class='puzzle-player' src='{{ puzzle_url }}'>
+    <style></style>
+    <ul class='inline'></ul>
+    <table></table>
+    <button class='btn'>Check</button>
+</div>
+{% endblock %}
+
+{% block tail_script %}
+<script src='/static/site/player.js'></script>
+<script>
+    $('.puzzle-player').player()
+</script>
+{% endblock %}
