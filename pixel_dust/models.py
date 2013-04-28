@@ -26,8 +26,11 @@ class PuzzleSolution(ndb.Model):
     def to_meta(self, reduced=False):
         created = self.created
         updated = self.updated
+        id = None
+        if self.key:
+            id = self.key.id()
         meta = {
-            'id': self.key.id(),
+            'id': id,
             'name': self.name,
             'hint': self.hint,
             'width': self.width,

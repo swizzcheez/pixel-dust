@@ -30,7 +30,7 @@ def home():
 def puzzle_list(group):
     if request.method == 'POST':
         return redirect(url_for('puzzle_editor',
-                                group=group, id=request.args['name']))
+                                group=group, id=request.form['name']))
     else:
         puzzles = PuzzleSolution.query(PuzzleSolution.group==group)
         return render_template('puzzle/list.html', puzzles=puzzles)
@@ -57,7 +57,10 @@ def puzzle_data(group, id):
                 row += form['%d,%d' % (x, y)]
             pixels.append(row)
 
-        puzzle.width = width
+        if puzzle is None:
+            puzzle = PuzzleSolution(group=group, name=id)
+
+        puzzle.width = int(form['size'])
         puzzle.hint = hint
         puzzle.name = form['title']
         puzzle.author = users.get_current_user()
@@ -103,6 +106,7 @@ def puzzle_player(group, id):
 @admin_required
 def puzzle_editor(group, id):
     return render_template('puzzle/editor.html',
+                           name=id,
                            save_url=url_for('puzzle_data',
                                             group=group, id=id),
                            puzzle_url=url_for('puzzle_data',
