@@ -7,7 +7,6 @@ Sunday Night (Final)
 TYPE | SEVERITY | ID | Summary
 ------|----|----|----
 FEAT | CRIT | Boards | Make >20 basic game boards
-FEAT | WANT | Shift-Mode | Add shift to hold back scoring
 FEAT | WANT | Puzzle-Crowd | Allow creation of puzzles by others
 FEAT | WANT | Editor-Bigger | Allow for 16x16 boads
 ARCH | WANT | Design-Scoreboard | Design the scoreboard feature
