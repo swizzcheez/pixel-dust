@@ -17,6 +17,15 @@
                href='#'>Instructions</a></h2>
     </div>
 
+    {% if not g.user %}
+    <div class='alert'>
+        You are not currently logged into Google.  You must log in if
+        you wish to record scores.
+        <br>
+        <a class='btn btn-warning' href='/login'>Click here to login</a>
+    </div>
+    {% endif %}
+
     <div class='alert alert-error'>
         Most of the testing for Pixel Dust has been under Linux Chrome.
         Firefox seems to work on both Windows and Linux, but has sound

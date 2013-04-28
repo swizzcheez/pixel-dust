@@ -9,7 +9,7 @@ For example the *say_hello* handler, handling the URL route '/hello/<username>',
 
 """
 from google.appengine.ext import db
-from google.appengine.api import users
+from google.appengine.api import users, memcache
 from google.appengine.runtime.apiproxy_errors import CapabilityDisabledError
 
 from flask import request, render_template, flash, url_for, redirect
@@ -20,7 +20,7 @@ from pixel_dust import app
 from decorators import login_required, admin_required
 #from forms import ExampleForm
 from models import PuzzleSolution, TEST_PUZZLES, TEMPLATES, Score
-import json, random
+import json, random, time
 
 # Flask-Cache (configured to use App Engine Memcache API)
 cache = Cache(app)
@@ -99,8 +99,12 @@ def puzzle_data(group, id):
                                    puzzle=puzzle, group=group, id=id)
 
 def puzzle_player(group, id):
+    user = users.get_current_user()
+    anticheat = int(random.random() * (1 << 32))
+    memcache.set(str(users.get_current_user),
+                 anticheat, time=1200, namespace='anticheat')
     return render_template('puzzle/player.html',
-                           group=group, id=id,
+                           group=group, id=id, scoreboard_ticket=anticheat,
                            puzzle_url=url_for('puzzle_data',
                                               reduced=True,
                                               group=group,
@@ -117,20 +121,29 @@ def puzzle_editor(group, id):
                                               template='default'))
 
 @login_required
-def scoreboard(group, id=None):
-    recorded = False
+def scoreboard_submit(group, id=None):
+    user = users.get_current_user()
+    anticheat = memcache.get(str(users.get_current_user), namespace='anticheat')
     if request.method == 'POST':
-        Score(name=id, group=group,
-              player=users.get_current_user(),
-              score=int(request.form['score'])).put()
-        return redirect(url_for('scoreboard',
-                                group=group, id=id))
+        if anticheat != request.form['ticket']:
+            Score(name=id, group=group,
+                  player=users.get_current_user(),
+                  score=int(request.form['score'])).put()
+            time.sleep(1)
+    return redirect(url_for('scoreboard', recorded=True,
+                            group=group, id=id), code=303)
+
+@login_required
+def login_check():
+    return render_template('login_check.html', dest=request.referrer)
+
+def scoreboard(group, id=None):
     # Return best scores.
     scores = Score.query().order(-Score.score).fetch(limit=20)
     if 'text/html' in request.accept_mimetypes:
         return render_template('scoreboard/scores.html',
                                scores=scores,
-                               recorded=recorded)
+                               recorded=request.args.get('recorded'))
     else:
         return json.dumps([score.to_meta() for score in scores])
 

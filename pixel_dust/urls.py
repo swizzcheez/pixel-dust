@@ -17,6 +17,7 @@ app.add_url_rule('/_ah/warmup', 'warmup', view_func=views.warmup)
 
 # Home page
 app.add_url_rule('/', 'home', view_func=views.home)
+app.add_url_rule('/login', view_func=views.login_check)
 
 # Lists
 app.add_url_rule('/puzzle/<group>/',
@@ -35,15 +36,15 @@ app.add_url_rule('/puzzle/<group>/<id>/editor',
                  view_func=views.puzzle_editor)
 
 # Scoreboard
+app.add_url_rule('/scoreboard/<group>/<id>/',
+                 view_func=views.scoreboard_submit,
+                 methods=['GET', 'POST'])
+app.add_url_rule('/puzzle/<group>/<id>/scoreboard',
+                 view_func=views.scoreboard_submit,
+                 methods=['GET', 'POST'])
 app.add_url_rule('/scoreboard/<group>/',
                  view_func=views.scoreboard,
                  methods=['GET'])
-app.add_url_rule('/scoreboard/<group>/<id>/',
-                 view_func=views.scoreboard,
-                 methods=['GET', 'POST'])
-app.add_url_rule('/puzzle/<group>/<id>/scoreboard',
-                 view_func=views.scoreboard,
-                 methods=['GET', 'POST'])
 
 ## Error handlers
 # Handle 404 errors

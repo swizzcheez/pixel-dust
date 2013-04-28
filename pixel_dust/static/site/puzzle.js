@@ -60,6 +60,7 @@
             var $this = $(this)
             var url = $this.attr('src')
             var scoreboard_url = $this.attr('scoreboard_url')
+            var scoreboard_ticket = $this.attr('scoreboard_ticket')
 
             // Capture UI elements
             var $colors = $('.palette', $this)
@@ -435,7 +436,7 @@
                 var $score = $('<div>').appendTo($bdy)
                     .html('Score: ' + get_score())
 
-                if (won && scoreboard_url)
+                if (won && scoreboard_url && scoreboard_ticket)
                 {
                     var url = window.location.href
                     var $form = $('<form>')
@@ -452,6 +453,10 @@
                         .appendTo($form)
                         .attr('name', 'score')
                         .attr('value', get_score())
+                    $('<input type="hidden">')
+                        .appendTo($form)
+                        .attr('name', 'ticket')
+                        .attr('value', scoreboard_ticket)
                 }
 
                 var $close = $('<button>').addClass('btn btn-primary')

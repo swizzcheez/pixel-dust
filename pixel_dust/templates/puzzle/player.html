@@ -9,9 +9,20 @@
 {% block content %}
 <div class='row'>
     <div class='puzzle-player span12' 
-        scoreboard_url='{{ url_for('scoreboard', 
-                           group=group, id=id) }}'
+        scoreboard_ticket='{{ scoreboard_ticket }}'
+        scoreboard_url='{{ url_for('scoreboard_submit', 
+                                   group=group, id=id) }}'
         src='{{ puzzle_url }}'>
+
+        {% if not scoreboard_ticket %}
+        <div class='alert'>
+            You are not currently logged into Google.  You must log in if
+            you wish to record scores.
+            <br>
+            <a class='btn btn-warning' href='/login'>Click here to login</a>
+        </div>
+        {% endif %}
+
         <h2 class='alert dusted'>
             <span>
                 <a href='/'>Pixel Dust</a>

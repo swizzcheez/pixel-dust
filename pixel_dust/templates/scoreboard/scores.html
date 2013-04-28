@@ -2,7 +2,7 @@
 
 {% block content %}
 <div class='row'>
-    <div class='puzzle-player span12' src='{{ puzzle_url }}'>
+    <div class='puzzle-player span12'>
         <h2 class='alert dusted'>
             <span>
                 <a href='/'>Pixel Dust</a>
@@ -12,6 +12,11 @@
             </span>
         </h2>
     </div>
+    {% if recorded %}
+    <div class='span12 alert alert-info'>
+        Your score was recorded.
+    </div>
+    {% endif %}
     <div class='span8 offset2'>
         <table class='table table-striped'>
             <tr>
