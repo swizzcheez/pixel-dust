@@ -20,9 +20,12 @@ app.add_url_rule('/', 'home', view_func=views.home)
 
 # Player
 app.add_url_rule('/puzzle/<group>/<id>',
-                 view_func=views.puzzle_data)
+                 view_func=views.puzzle_data,
+                 methods=['GET', 'POST'])
 app.add_url_rule('/puzzle/<group>/<id>/player',
                  view_func=views.puzzle_player)
+app.add_url_rule('/puzzle/<group>/<id>/editor',
+                 view_func=views.puzzle_editor)
 
 ## Error handlers
 # Handle 404 errors

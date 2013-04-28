@@ -34,6 +34,35 @@ class PuzzleSolution(ndb.Model):
         meta.update(json.loads(self.data))
         return meta
 
+TEMPLATES = dict(
+    default = PuzzleSolution(
+        name='default',
+        description='Generic default',
+        width=8,
+        data=json.dumps({
+            'colors':
+            {
+                ' ': [ 0, 0, 0 ],
+                'R': [ 255, 0, 0 ],
+                'G': [ 0, 255, 0 ],
+                'B': [ 0, 0, 255 ],
+                'P': [ 255, 0, 255 ],
+            },
+            'pixels':
+            [
+                '        ',
+                '        ',
+                '        ',
+                '        ',
+                '        ',
+                '        ',
+                '        ',
+                '        ',
+            ]
+        })
+    ),
+)
+
 TEST_PUZZLES = dict(
     square = PuzzleSolution(
         name='square',

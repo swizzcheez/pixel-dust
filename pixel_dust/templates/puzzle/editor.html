@@ -1,0 +1,42 @@
+{% extends "base.html" %}
+
+{% block style_block %}
+<style>
+@import url(/static/site/puzzle.css);
+</style>
+{% endblock %}
+
+{% block content %}
+<form method='POST' action='{{ save_url }}'
+    class='puzzle-editor form form-horizontal' 
+    src='{{ puzzle_url }}'>
+    <div class='control-group'>
+        <label class='control-label'>Name of Puzzle</label>
+        <div class='controls'>
+            <input type='text' name='title'>
+        </div>
+    </div>
+    <div class='control-group'>
+        <label class='control-label'>Summary</label>
+        <div class='controls'>
+            <textarea name='description'></textarea>
+        </div>
+    </div>
+    <div class='control-group'>
+        <label class='control-label'>Edit Grid</label>
+        <div class='controls'>
+            <div class='btn-group palette'></div>
+            <div class='pixel-grid'></div>
+        </div>
+    </div>
+    <div class='control-group'>
+        <div class='controls'>
+            <button class='btn btn-primary'>Save</button>
+        </div>
+    </div>
+</form>
+{% endblock %}
+
+{% block tail_script %}
+<script src='/static/site/puzzle.js'></script>
+{% endblock %}

@@ -1,17 +1,8 @@
 
-.pixel-palette
+.pixel-palette div
 {
     width: 3em;
     height: 3em;
-    border: solid 1px silver;
-    opacity: 50%;
-    cursor: pointer;
-}
-
-.pixel-palette[selected]
-{
-    border: solid 1px gray;
-    opacity: 100%;
 }
 
 .playfield

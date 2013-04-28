@@ -14,11 +14,15 @@
     function plugin(name, fn, $sel)
     {
         var args = Array.prototype.slice.call(2)
-        $sel = $($sel)
-        $('body').on('DOMNodeInsertedIntoDocument', $sel, 
-                     function(event) { fn.apply($(event.target), args) })
-        fn.apply($sel, args)
-        return fn
+        $.fn[name] = fn
+        if ($sel)
+        {
+            $sel = $($sel)
+            $('body').on('DOMNodeInsertedIntoDocument', $sel, 
+                         function(event) { fn.apply($(event.target), args) })
+            fn.apply($sel, args)
+            return fn
+        }
     }
 
     function puzzle_player()
@@ -31,15 +35,9 @@
             var url = $this.attr('src')
 
             // Capture UI elements
-            var $colors = $('ul', $this)
+            var $colors = $('.palette', $this)
             var $playfield = $('.playfield', $this)
-            var $style = $('style', $this)
             var $check = $('button', $this)
-
-            if ($style.size() == 0)
-            {
-                $style = $('<style>').appendTo($this)
-            }
 
             // Go get that puzzle (solution)
             var solution = new PuzzleSolution()
@@ -47,39 +45,21 @@
             function start_puzzle(solution)
             {
                 // Reset and populate components
-                $colors.empty()
                 $playfield.empty()
-                $style.empty()
 
-                $.each(solution.colors,
-                function setup_colors(index, color)
-                {
-                    var $li = $('<li>').appendTo($colors)
-                    $li.addClass('pixel-palette')
-                    $li.attr('pixel-color', color.index)
-                    $li.css(color.css)
-                    //$style.append('[pixel-color="' + color.index + '"]'
-                    //              + ' { background: ' + color.rgb + ' }')
-                    $li.click(function() 
-                    { select_palette(this) })
-                })
+                $colors.puzzle_palette(solution.colors)
+                $colors.bind('color', 
+                             function(event, color) { select_palette(color) })
 
-                select_palette(0)
+                $colors.children().first().click() 
 
                 split($playfield, 0, 0, solution.width, solution.height)
             })
 
-            // Set the current palette selection
             var current_color
-            function select_palette(item)
+            function select_palette(color)
             {
-                var $sel = typeof(item) === 'number' 
-                           ? $('[pixel-color="' + item + '"]', $colors)
-                           : $(item)
-                            
-                $('li', $colors).removeAttr('selected')
-                $sel.attr('selected', true)
-                current_color = solution.colors[$sel.attr('pixel-color')]
+                current_color = color
             }
 
             function split($area, x, y, width, height, color)
@@ -226,7 +206,6 @@
                                     $pixel.css('border', 'none')
                                 }
 
-                                console.log(complete)
                                 if ($pixel.hasClass('playfield'))
                                 {
                                     break
@@ -244,7 +223,6 @@
                 else
                 {
                     var $scoreboard = $split.children('.pixel-scoreboard')
-                    console.log(right, wrong, close)
                     $('.pixels-right', $scoreboard).html(right)
                     $('.pixels-wrong', $scoreboard).html(wrong)
                     $('.pixels-close', $scoreboard).html(close)
@@ -318,6 +296,7 @@
                     index: self.colors.length,
                     css: { 'background-color': rgb },
                     rgb: rgb,
+                    code: key,
                     r: r,
                     g: g,
                     b: b
@@ -420,6 +399,123 @@
         }
     }
 
+    plugin('puzzle_palette',
+    function palette(colors)
+    {
+        var $this = $(this)
+        $this.empty()
+        $this.attr('data-toggle', 'buttons-radio')
+
+        $.each(colors,
+        function setup_colors(index, color)
+        {
+            var $btn = $('<a href="#">').appendTo($this)
+            $('<input type="hidden">')
+                .appendTo($this)
+                .attr('name', 'color')
+                .val(color.code)
+            $('<input type="hidden">')
+                .appendTo($this)
+                .attr('name', 'color-' + color.code)
+                .val(color.rgb.toHexString())
+            $btn.addClass('pixel-palette btn')
+            $btn.attr('pixel-color', color.index)
+            var $div = $('<div>').appendTo($btn)
+            $div.css(color.css)
+            $btn.click(function() { $this.trigger('color', color) })
+        })
+    })
+
+    function puzzle_editor()
+    {
+            // Capture the configuration and download the puzzle in question
+            var $this = $(this)
+            var url = $this.attr('src')
+
+            // Capture UI elements
+            var $colors = $('.palette', $this)
+            var $pixels = $('.pixel-grid', $this)
+            var $check = $('button', $this)
+
+            // Go get that puzzle (solution)
+            var solution = new PuzzleSolution()
+            solution.load(url,
+            function process_puzzle(solution)
+            {
+                // Reset and populate components
+                $colors.puzzle_palette(solution.colors)
+                $colors.bind('color', 
+                             function(event, color) { select_palette(color) })
+
+                $colors.children().first().click() 
+
+                $pixels.edit_grid(
+                {
+                    width: solution.width,
+                    height: solution.height,
+                    src: solution.pixels,
+                    default_color: solution.colors[0],
+                })
+                $pixels.bind('set_color',
+                function set_color(event, $dest)
+                {
+                    $($dest).animate(current_color.css)
+                    $('input', $dest).val(color.code)
+                })
+
+                //$('[name=title]').val(solution.name)
+                //$('[name=description]').text(solution.description)
+                //$('[name=width]').val(solution.width)
+            })
+       
+            var current_color
+            function select_palette(color)
+            {
+                current_color = color
+            }
+
+    }
+
+    plugin('edit_grid',
+    function edit_grid(options)
+    {
+        var $this = $(this)
+        var width = options.width
+        var height = options.height
+        var src = options.src
+        var default_color = options.default_color
+
+        $this.empty()
+        var $table = $('<table>').appendTo($this)
+
+        for (var y = 0; y < height; ++y)
+        {
+            var $row = $('<tr>').appendTo($table)
+            for (var x = 0; x < width; ++x)
+            {
+                var $cell = $('<td>').appendTo($row)
+                $cell.css('border', 'solid 1px black')
+                $cell.css('width', '1em')
+                $cell.css('height', '1em')
+                var pixel = src[y][x]
+                $cell.css(pixel.color.css);
+                $('<input type="hidden">')
+                    .appendTo($cell)
+                    .val(pixel.color.code)
+                    .attr('name', x + ',' + y);
+                (function($cell)
+                {
+                    $cell.click(
+                    function ()
+                    {
+                        $this.trigger('set_color', $cell)
+                    })
+                })($cell)
+            }
+        }
+    })
+
     plugin('puzzle_player', puzzle_player, '.puzzle-player')
+    plugin('puzzle_editor', puzzle_editor, '.puzzle-editor')
 })(jQuery);
 
