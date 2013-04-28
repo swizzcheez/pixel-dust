@@ -237,7 +237,23 @@
                 var $ftr = $('<div>').appendTo($dialog).addClass('modal-footer')
 
                 $hdr.html('Congratulations!') 
-                $bdy.html('Completed...')
+
+                var name = solution.name
+                var article
+                switch (name.substr(0, 1).toLowerCase())
+                {
+                case 'a':
+                case 'e':
+                case 'i':
+                case 'o':
+                case 'u':
+                    article = 'an'
+                    break
+                default:
+                    article = 'a'
+                }
+
+                $bdy.html("It's " + article + " " + name)
 
                 var $close = $('<button>').addClass('btn btn-primary')
                                           .appendTo($ftr)
@@ -275,6 +291,7 @@
         function update_from_json_data(data)
         {
             var self = this
+            self.id = data.id
             self.name = data.name
             self.colors = [] 
             self.pixels = []
@@ -458,6 +475,7 @@
                 })
 
                 console.log(solution)
+                $('[name=_id]').val(solution.id)
                 $('[name=title]').val(solution.name)
                 $('[name=hint]').text(solution.hint)
                 $('[name=width]').val(solution.width)

@@ -18,12 +18,19 @@ app.add_url_rule('/_ah/warmup', 'warmup', view_func=views.warmup)
 # Home page
 app.add_url_rule('/', 'home', view_func=views.home)
 
+# Lists
+app.add_url_rule('/puzzle/<group>/',
+                 view_func=views.puzzle_list,
+                 methods=['GET', 'POST'])
+
 # Player
 app.add_url_rule('/puzzle/<group>/<id>',
                  view_func=views.puzzle_data,
                  methods=['GET', 'POST'])
 app.add_url_rule('/puzzle/<group>/<id>/player',
                  view_func=views.puzzle_player)
+
+# Editor
 app.add_url_rule('/puzzle/<group>/<id>/editor',
                  view_func=views.puzzle_editor)
 

@@ -23,18 +23,26 @@ class PuzzleSolution(ndb.Model):
     updated = ndb.DateTimeProperty(auto_now=True)
     data = ndb.TextProperty(required=True)
 
-    def to_meta(self):
+    def to_meta(self, reduced=False):
         created = self.created
         updated = self.updated
         meta = {
+            'id': self.key.id(),
             'name': self.name,
             'hint': self.hint,
             'width': self.width,
-            'author': self.author,
+            'author': str(self.author),
             'created': str(created),
             'updated': str(updated),
         }
         meta.update(json.loads(self.data))
+        if reduced:
+            # Get set of all used colors
+            used = set()
+            for row in meta['pixels']:
+                used.update(row)
+            for key in set(meta['colors']).difference(used):
+                del meta['colors'][key]
         return meta
 
 TEMPLATES = dict(
@@ -47,9 +55,13 @@ TEMPLATES = dict(
             {
                 ' ': 'black',
                 'R': 'red',
-                'G': 'green',
+                'G': '#00FF00',
                 'B': 'blue',
                 'P': 'purple',
+                'Y': 'yellow',
+                'C': '#00FFFF',
+                'O': '#FF6600',
+                'W': 'white',
             },
             'pixels':
             [
