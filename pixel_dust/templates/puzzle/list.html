@@ -1,0 +1,31 @@
+{% extends "base.html" %}
+
+{% block content %}
+<table class='table'>
+{% for puzzle in puzzles %}
+<tr>
+    <th>
+        <a href='{{ url_for( 'puzzle_editor',
+                             group=puzzle.group, id=puzzle.name ) }}'>
+        {{ puzzle.name }}
+        </a>
+    </th>
+    <td>
+        {{ puzzle.author }}
+    </td>
+    <td>
+        {{ puzzle.updated }}
+    </td>
+    <td>
+        {{ puzzle.hint }}
+    </td>
+</tr>
+{% endfor %}
+</table>
+
+<form method='POST' type='form form-inline'>
+<input type='text' name='name' placeholder='Name' autofocus>
+<button class='btn btn-primary'>Create</button>
+</form>
+{% endblock %}
+
