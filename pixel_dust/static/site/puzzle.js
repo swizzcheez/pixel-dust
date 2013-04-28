@@ -297,6 +297,7 @@
             self.pixels = []
             self.width = data.width
             self.height = data.width
+            self.hint = data.hint
 
             var color_key = {}
 

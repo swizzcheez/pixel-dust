@@ -8,6 +8,7 @@ For example the *say_hello* handler, handling the URL route '/hello/<username>',
   must be passed *username* as the argument.
 
 """
+from google.appengine.ext import db
 from google.appengine.api import users
 from google.appengine.runtime.apiproxy_errors import CapabilityDisabledError
 
@@ -59,10 +60,11 @@ def puzzle_data(group, id):
 
         if puzzle is None:
             puzzle = PuzzleSolution(group=group, name=id)
+        else:
+            puzzle.name = form['title']
 
         puzzle.width = int(form['size'])
-        puzzle.hint = hint
-        puzzle.name = form['title']
+        puzzle.hint = db.Text(hint)
         puzzle.author = users.get_current_user()
         puzzle.data = json.dumps(
         {
@@ -87,7 +89,7 @@ def puzzle_data(group, id):
                 template = request.args.get('template')
                 if template is not None:
                     puzzle = TEMPLATES.get(template)
-                    puzzle.name = group + '/' + id
+                    puzzle.name = id
 
         if 'application/json' in request.accept_mimetypes:
             return json.dumps(
