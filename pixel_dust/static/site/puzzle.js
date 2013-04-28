@@ -59,6 +59,7 @@
             // Capture the configuration and download the puzzle in question
             var $this = $(this)
             var url = $this.attr('src')
+            var scoreboard_url = $this.attr('scoreboard_url')
 
             // Capture UI elements
             var $colors = $('.palette', $this)
@@ -434,12 +435,36 @@
                 var $score = $('<div>').appendTo($bdy)
                     .html('Score: ' + get_score())
 
+                if (won && scoreboard_url)
+                {
+                    var url = window.location.href
+                    var $form = $('<form>')
+                        .appendTo($ftr)
+                        .css('display', 'inline-block')
+                        .css('padding-right', '1em')
+                        .attr('action', scoreboard_url)
+                        .attr('method', 'POST')
+                    var $btn = $('<button>')
+                        .appendTo($form)
+                        .addClass('btn btn-success')
+                    $btn.html('Submit Score')
+                    $('<input type="hidden">')
+                        .appendTo($form)
+                        .attr('name', 'score')
+                        .attr('value', get_score())
+                }
+
                 var $close = $('<button>').addClass('btn btn-primary')
                                           .appendTo($ftr)
                 $close.html('Close')
                 $close.attr('data-dismiss', 'modal')
 
-                $dialog.modal()
+                var $menu = $('<a>').addClass('btn btn-primary')
+                                          .appendTo($ftr)
+                $menu.html('Main Menu')
+                $menu.attr('href', '/')
+
+                $dialog.modal({ keyboard: false, backdrop: 'static' })
             }
         })
     }

@@ -11,7 +11,7 @@
     <div class='dusted'>
         <h1>Pixel Dust</h1>
         <h2><a href='/puzzle/basic/RANDOM/player'>Play Pixel Dust</a>
-        <h2><a href='/scoreboard/'>Best Scores</a></h2>
+        <h2><a href='/scoreboard/basic/'>Top Scores</a></h2>
         <h2><a data-toggle='modal'
                data-target='#instructions'
                href='#'>Instructions</a></h2>
@@ -99,6 +99,27 @@
     </div>
 </div>
 
+{% endblock %}
+
+{% block tail_script %}
+<script>
+$(function()
+{
+    $('#scoreboard').bind('show',
+    function()
+    {
+        var $this = $(this)
+        var $body = $('.modal-body', $this)
+        var $scores = $('.scores', $body)
+        $scores.empty()
+        $.getJSON('{{ url_for('scoreboard', group='basic') }}',
+        function(data)
+        {
+            console.log(data)
+        })
+    })
+})
+</script>
 {% endblock %}
 
 {% block XXX_tail_script %}

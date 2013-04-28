@@ -108,3 +108,32 @@ TEST_PUZZLES = dict(
     )
 )
 
+class Score(ndb.Model):
+    group = ndb.StringProperty(required=True)
+    name = ndb.StringProperty(required=True)
+    player = ndb.UserProperty(required=True)
+    score = ndb.IntegerProperty(required=True)
+    created = ndb.DateTimeProperty(auto_now_add=True)
+
+    def to_meta(self, reduced=False):
+        created = self.created
+        id = None
+        if self.key:
+            id = self.key.id()
+        meta = {
+            'id': id,
+            'group': self.group,
+            'name': self.name,
+            'score': self.hint,
+            'player': str(self.author),
+            'created': str(created),
+        }
+        meta.update(json.loads(self.data))
+        if reduced:
+            # Get set of all used colors
+            used = set()
+            for row in meta['pixels']:
+                used.update(row)
+            for key in set(meta['colors']).difference(used):
+                del meta['colors'][key]
+        return meta

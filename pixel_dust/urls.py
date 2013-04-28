@@ -34,6 +34,17 @@ app.add_url_rule('/puzzle/<group>/<id>/player',
 app.add_url_rule('/puzzle/<group>/<id>/editor',
                  view_func=views.puzzle_editor)
 
+# Scoreboard
+app.add_url_rule('/scoreboard/<group>/',
+                 view_func=views.scoreboard,
+                 methods=['GET'])
+app.add_url_rule('/scoreboard/<group>/<id>/',
+                 view_func=views.scoreboard,
+                 methods=['GET', 'POST'])
+app.add_url_rule('/puzzle/<group>/<id>/scoreboard',
+                 view_func=views.scoreboard,
+                 methods=['GET', 'POST'])
+
 ## Error handlers
 # Handle 404 errors
 @app.errorhandler(404)

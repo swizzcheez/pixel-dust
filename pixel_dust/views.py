@@ -19,7 +19,7 @@ from flask_cache import Cache
 from pixel_dust import app
 from decorators import login_required, admin_required
 #from forms import ExampleForm
-from models import PuzzleSolution, TEST_PUZZLES, TEMPLATES
+from models import PuzzleSolution, TEST_PUZZLES, TEMPLATES, Score
 import json, random
 
 # Flask-Cache (configured to use App Engine Memcache API)
@@ -100,6 +100,7 @@ def puzzle_data(group, id):
 
 def puzzle_player(group, id):
     return render_template('puzzle/player.html',
+                           group=group, id=id,
                            puzzle_url=url_for('puzzle_data',
                                               reduced=True,
                                               group=group,
@@ -114,6 +115,24 @@ def puzzle_editor(group, id):
                            puzzle_url=url_for('puzzle_data',
                                               group=group, id=id,
                                               template='default'))
+
+@login_required
+def scoreboard(group, id=None):
+    recorded = False
+    if request.method == 'POST':
+        Score(name=id, group=group,
+              player=users.get_current_user(),
+              score=int(request.form['score'])).put()
+        return redirect(url_for('scoreboard',
+                                group=group, id=id))
+    # Return best scores.
+    scores = Score.query().order(-Score.score).fetch(limit=20)
+    if 'text/html' in request.accept_mimetypes:
+        return render_template('scoreboard/scores.html',
+                               scores=scores,
+                               recorded=recorded)
+    else:
+        return json.dumps([score.to_meta() for score in scores])
 
 def warmup():
     """App Engine warmup handler

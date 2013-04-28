@@ -1,0 +1,41 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class='row'>
+    <div class='puzzle-player span12' src='{{ puzzle_url }}'>
+        <h2 class='alert dusted'>
+            <span>
+                <a href='/'>Pixel Dust</a>
+            </span>
+            <span class='pull-right'>
+                Top Scores
+            </span>
+        </h2>
+    </div>
+    <div class='span8 offset2'>
+        <table class='table table-striped'>
+            <tr>
+                <th>Score</th>
+                <th>Player</th>
+                <th>Played</th>
+                <th>Board</th>
+            </tr>
+            {% for score in scores %}
+            <tr>
+                <th>{{ score.score }}</th>
+                <th>{{ score.player.nickname() }}</th>
+                <th>{{ score.created.strftime('%m/%d/%Y %H:%M') }}</th>
+                <th>{{ score.name }}</th>
+            </tr>
+            {% else %}
+            <tr>
+                <th colspan='99' class='dusted'>
+                    No scores available
+                </th>
+            </tr>
+            {% endfor %}
+        </table>
+    </div>
+</div>
+{% endblock %}
+
