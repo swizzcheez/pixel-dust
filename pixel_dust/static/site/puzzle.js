@@ -64,6 +64,31 @@
             var $colors = $('.palette', $this)
             var $playfield = $('.playfield', $this)
             var $check = $('button', $this)
+            var $score = $('.score', $this)
+            var running = false
+
+            var STARTUP_GRACE_TIME = $this.attr('grace-time') || 3000
+            var COMPLETE_BONUS = $this.attr('complete-bonus') || 50
+            var TICK_SCORE_LOSS = $this.attr('tick-loss') || 1
+            var PUZZLE_COLOR_BASIS = $this.attr('puzzle-color-points') || 25
+            var WARN_TIME = $this.attr('warning-time') || 5000
+            var TICK_TIME = $this.attr('tick-ms') || 100
+
+            function adjust_score(delta)
+            {
+                return set_score(get_score() + delta)
+            }
+
+            function set_score(new_score)
+            {
+                $score.text(new_score)
+                return new_score
+            }
+
+            function get_score()
+            {
+                return parseInt($score.text())
+            }
 
             // Get and setup audio
             var wrong_snd = setup_audio(
@@ -74,6 +99,10 @@
                 $this.attr('match') || '/static/sound/whip-whip')
             var win_snd = setup_audio(
                 $this.attr('win') || '/static/sound/win')
+            var alarm_snd = setup_audio(
+                $this.attr('alarm') || '/static/sound/timesup')
+            var lose_snd = setup_audio(
+                $this.attr('lose') || '/static/sound/lose')
 
             // Go get that puzzle (solution)
             var solution = new PuzzleSolution()
@@ -90,6 +119,47 @@
                 $colors.children().first().click() 
 
                 split($playfield, 0, 0, solution.width, solution.height)
+
+                set_score(solution.compute_par_score(PUZZLE_COLOR_BASIS))
+
+                running = true
+                var warn_score = WARN_TIME / (TICK_TIME / TICK_SCORE_LOSS)
+                var warned = false
+                setTimeout(
+                function()
+                {
+                    function tick()
+                    {
+                        if (running)
+                        {
+                            var score = adjust_score(-TICK_SCORE_LOSS)
+                            if (score > 0)
+                            {
+                                if (score < warn_score)
+                                {
+                                    if (!warned)
+                                    {
+                                        play(alarm_snd)
+                                        warned = true
+                                    }
+                                }
+                                else
+                                {
+                                    warned = false
+                                }
+                                setTimeout(tick, TICK_TIME)
+                            }
+                            else
+                            {
+                                // Game over, man!
+                                play(lose_snd)
+                                game_finished(false)
+                            }
+                        }
+                    }
+
+                    tick()
+                }, STARTUP_GRACE_TIME)
             })
 
             var current_color
@@ -98,7 +168,31 @@
                 current_color = color
             }
 
-            function split($area, x, y, width, height, color)
+            $('body').bind('keypress',
+            function pressed(event)
+            {
+                var key = String.fromCharCode(event.charCode)
+                switch(key)
+                {
+                case '1':
+                case '2':
+                case '3':
+                case '4':
+                case '5':
+                case '6':
+                case '7':
+                case '8':
+                case '9':
+                    $('[pixel-color="' 
+                        + (parseInt(key) - 1) + '"]', $colors).click()
+                    return false
+                case '0':
+                    $('[pixel-color=9"' + key + '"]', $colors).click()
+                    return false
+                }
+            })
+
+            function split($area, x, y, width, height, color, auto_complete)
             {
                 $area.addClass('pixel-area')
                 color = color || solution.colors[0]
@@ -141,6 +235,7 @@
 
                         // Hook up the color change and status update bits.
                         $div.click(function() { set_pixel_color(this) })
+
                     }
                 }
 
@@ -154,8 +249,8 @@
                            .addClass('pixels-wrong badge badge-important')
                 $scoreboard.click( function() { return true } )
                 $('span', $scoreboard).click( function() { return true } )
-                
-                check_solution($area)
+               
+                check_solution($area, auto_complete)
             }
 
             function set_pixel_color($pixel, color)
@@ -165,14 +260,18 @@
                 $pixel = $($pixel)
                 $pixel.attr('pixel-color', color.index)
                 $pixel.animate(color.css)
-                check_solution($pixel.parent())
+                if (check_solution($pixel.parent()) && running)
+                {
+                    adjust_score(COMPLETE_BONUS)
+                }
             }
 
-            function check_solution($split)
+            function check_solution($split, auto_complete)
             {
                 var right = 0
                 var want_colors = {}
                 var got_colors = {}
+                auto_complete = auto_complete || false
 
                 $split.children('.pixel').each(
                 function check()
@@ -180,6 +279,14 @@
                     var $pixel = $(this);
                     var correct = $pixel.attr('correct')
                     var current = $pixel.attr('pixel-color')
+
+                    if (auto_complete)
+                    {
+                        $pixel.attr('pixel-color', correct)
+                        current = correct
+                        $pixel.animate(solution.colors[correct].css)
+                    }
+
                     if (correct == current)
                     {
                         right++
@@ -191,20 +298,26 @@
                     }
                 })
 
-                var close = 0
+                var close = 4 - right
 
                 $.each(got_colors,
                 function(color_index, count)
                 {
-                    close += Math.max(0, 
-                                      (want_colors[color_index] || 0) - count)
+                    var wanted = want_colors[color_index] || 0
+                    if (count > wanted)
+                    {
+                        close -= (count - wanted)
+                    }
                 })
 
                 var wrong = 4 - right - close
 
-                if (right == 4)
+                if (auto_complete || right == 4)
                 {
-                    play(match_snd)
+                    if (! auto_complete)
+                    {
+                        play(match_snd)
+                    }
                     $split.children('.pixel-scoreboard').remove()
                     $split.children('.pixel').each(
                     function subsplit()
@@ -219,12 +332,13 @@
                         $pixel.unbind('click')
                         if (width > 1 && height > 1)
                         {
-                            split($pixel, x, y, width, height, color)
+                            split($pixel, x, y, width, height, color, 
+                                  auto_complete)
                         }
                         else
                         {
                             $pixel.attr('completed', 1)
-                            $pixel.css('border', 'none')
+                            $pixel.css('border', 'solid 1px black')
                             while(true)
                             {
                                 var complete = 0
@@ -250,9 +364,9 @@
                                 $pixel = $pixel.parent()
                             }
 
-                            if ($playfield.attr('completed'))
+                            if ($playfield.attr('completed') && ! auto_complete)
                             {
-                                game_finished()
+                                game_finished(true)
                             }
                         }
                     })
@@ -264,7 +378,6 @@
                     var $right = $('.pixels-right', $scoreboard)
                     var was_right = parseInt($right.html())
                     var delta = right - was_right
-                    console.log(was_right, delta, $right, $right.html())
                     if (delta > 0)
                     {
                         play(right_snd)
@@ -282,15 +395,24 @@
                 return right == 4
             }
 
-            function game_finished()
+            function game_finished(won)
             {
                 var $dialog = $('<div>').addClass('modal fade hide')
                 var $hdr = $('<h3>').appendTo($dialog).addClass('modal-header')
                 var $bdy = $('<div>').appendTo($dialog).addClass('modal-body')
                 var $ftr = $('<div>').appendTo($dialog).addClass('modal-footer')
 
-                $hdr.html('Congratulations!') 
+                running = false
+                if (won)
+                {
+                    $hdr.html('Congratulations!') 
+                }
+                else
+                {
+                    $hdr.html("Time's Up!") 
+                }
                 play(win_snd)
+                check_solution($playfield, true)
 
                 var name = solution.name
                 var article
@@ -307,7 +429,10 @@
                     article = 'a'
                 }
 
-                $bdy.html("It's " + article + " " + name)
+                var $isa = $('<div>').appendTo($bdy)
+                    .html("It's " + article + " " + name)
+                var $score = $('<div>').appendTo($bdy)
+                    .html('Score: ' + get_score())
 
                 var $close = $('<button>').addClass('btn btn-primary')
                                           .appendTo($ftr)
@@ -462,6 +587,52 @@
             })
 
             return groups
+        },
+
+        compute_par_score:
+        function compute_par_score(basis, x, y, width, height)
+        {
+            var self = this
+            if (width < 2 || height < 2)
+            {
+                return 0
+            }
+            else
+            {
+                x = x || 0
+                y = y || 0
+                width = width || self.width
+                height = height || self.height
+
+                var hist = self.histogram(x, y, width, height)
+                var colors = 0
+                $.each(hist,
+                function(key, value)
+                {
+                    if (value > 0)
+                    {
+                        colors++
+                    }
+                })
+
+                var score = (colors - 1) * basis
+
+                // Also add in subordinates.
+                var hwidth = width / 2
+                var hheight = height / 2
+                for (var dy = 0; dy < 2; ++dy)
+                {
+                    for (var dx = 0; dx < 2; ++dx)
+                    {
+                        score += this.compute_par_score(
+                            basis,
+                            x + dx * hwidth, y + dy * hheight,
+                            hwidth, hheight)
+                    }
+                }
+
+                return score
+            }
         }
     }
 
@@ -476,6 +647,16 @@
         function setup_colors(index, color)
         {
             var $btn = $('<a href="#">').appendTo($this)
+            $btn.addClass('dusted').css('font-size: 2em')
+            var key = color.index + 1
+            if (key < 10)
+            {
+                $btn.html(key)
+            }
+            else
+            {
+                $btn.html('0')
+            }
             $('<input type="hidden">')
                 .appendTo($this)
                 .attr('name', 'color')
@@ -502,7 +683,6 @@
             var $colors = $('.palette', $this)
             var $pixels = $('.pixel-grid', $this)
             var $fill = $('.fill-btn', $this)
-            console.log($fill)
 
             // Go get that puzzle (solution)
             var solution = new PuzzleSolution()
@@ -573,7 +753,7 @@
             for (var x = 0; x < width; ++x)
             {
                 var $cell = $('<td>').appendTo($row)
-                $cell.css('border', 'solid 1px black')
+                $cell.css('border', 'solid 1px #FFFFFF')
                 $cell.css('width', '1em')
                 $cell.css('height', '1em')
                 var pixel = src[y][x]

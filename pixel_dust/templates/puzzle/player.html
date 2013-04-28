@@ -7,10 +7,26 @@
 {% endblock %}
 
 {% block content %}
-<div class='puzzle-player' src='{{ puzzle_url }}'>
-    <div class='btn-group palette'></div>
-    <div class='playfield'
-        style='width: 320px; height: 320px'></div>
+<div class='row'>
+    <div class='puzzle-player span12' src='{{ puzzle_url }}'>
+        <h2 class='alert dusted'>
+            <span>
+                <a href='/'>Pixel Dust</a>
+            </span>
+            <span class='pull-right span3'>
+                Score: <span class='score'></span>
+            </span>
+        </h2>
+        <div style='text-align: center'>
+            <div class='btn-group palette'></div>
+            <br/>
+            <br/>
+            <div class='playfield'
+                style='margin-left: auto;
+                       margin-right: auto;
+                       width: 320px; height: 320px'></div>
+        </div>
+    </div>
 </div>
 {% endblock %}
 

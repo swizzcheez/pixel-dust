@@ -18,20 +18,26 @@
     position: absolute;
     height: 50%;
     width: 50%;
-    border: solid 1px black;
+    border: solid 1px white;
     cursor: pointer;
 }
 
 .pixel-scoreboard
 {
     position: absolute;
-    top: 0%;
-    /*visibility: hidden; */
+    bottom: 100%;
+    visibility: hidden; 
     z-index: 9999;
 }
 
 .pixel-area:hover > .pixel-scoreboard
 {
     visibility: visible;
+}
+
+.pixel:hover
+{
+    border-color: yellow;
+    z-index: 10;
 }
 

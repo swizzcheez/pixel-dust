@@ -1,6 +1,6 @@
 {% extends "base.html" %}
 
-{% block style_block %}
+{% block XXX_style_block %}
 <style>
 @import url(/static/site/puzzle.css);
 </style>
@@ -9,28 +9,97 @@
 {% block content %}
 <div class='dusted span6 offset3' style='text-align: center'>
     <h1>Pixel Dust</h1>
-    <h2><a data-toggle='modal'
-           data-target='#random-player'
-           href='#'>Play Pixel Dust</a></h2>
+    <h2><a href='/puzzle/basic/RANDOM/player'>Play Pixel Dust</a>
     <h2><a href='/scoreboard/'>Best Scores</a></h2>
-    <h2><a href='/help/instructions.html'>Instructions</a></h2>
-</div>
+    <h2><a data-toggle='modal'
+           data-target='#instructions'
+           href='#'>Instructions</a></h2>
 
-<div id='random-player' class='modal hide fade'>
-    <div class='modal-body'>
-        <div class='puzzle-player' 
-            src='{{ url_for("puzzle_player", 
-                            group='basic',
-                            id='RANDOM')}}'>
-            <div class='btn-group palette'></div>
-            <div class='playfield'
-                style='width: 320px; height: 320px'></div>
-        </div>
+    <div class='alert alert-error'>
+        Most of the testing for Pixel Dust has been on Linux Chrome.
+        Firefox seems to work on both Windows and Linux, but has sound
+        issues.
+        <br><br>
+        <p>  
+        <strong>
+        Internet Explorer is not currently supported and I don't know if 
+        I'll have time to make it work on IE yet!  Sorry!
+        </strong>
+        </p>
+        I don't have a Mac so no 
+        testing has been done on that platform, but I suspect it should
+        work.
     </div>
 </div>
+
+<!--
+<div id='random-player' class='modal hide fade'>
+    <div class='modal-body' style='height: 480px;'>
+    </div>
+</div>
+-->
+
+<div id='instructions' class='modal hide fade'>
+    <h3 class='modal-header dusted'>Instructions</h3>
+    <div class='modal-body'>
+        <h4 class='dusted'>The story...</h4>
+        What story?  Who's got time for that!?!
+        
+        <h4 class='dusted'>Ok, so what do you do?</h4>
+        In Pixel Dust, you will be challenged to figure out the picture the
+        computer has in its mind by successively tryiing to decode the
+        colors at different resolutions until you finally reach the real
+        picture, or die ... er, lose trying...
+
+        <h4 class='dusted'>The First Puzzle</h4>
+        You will be first presented with a 2x2 grid and some clickable
+        colors at the top.  Simply select a color and click into one of the
+        squares.  Keep an eye on the three counters to tell you how you're
+        doing:
+
+        <dl class='dl-horizontal'>
+            <dt>Green</dt>
+            <dd>The number of squares you have right</dd>
+
+            <dt>Yellow</dt>
+            <dd>The number of squares that have a correct color but in the
+                wrong position.</dd>
+
+            <dt>Red</dt>
+            <dd>The number of squares that not only have a color that isn't
+                part of the solution.</dd>
+        </dl>
+
+        <h4 class='dusted'>Did it -- wait -- what happened?</h4>
+        Once the first puzzle is solved, four smaller puzzles are put in
+        its place, using the colors from the outer one.  You then must
+        solve the inner puzzles.  Once those are solved, you are presented
+        with one more layer.  If you can make it through all three layers
+        before you run out of score then you win.
+
+        <h4 class='dusted'>Wait, run out of score?</h4>
+        Yeah.  After three seconds of grace your score will start running
+        out.  Better figure stuff out quick of you're history.
+
+        <h4 class='dusted'>Automagic Solutions</h4>
+        In some rare cases, parts of the puzzle will automatically solve
+        themselves.  This occurs when the colors selected happen to match
+        all the squares of the smaller puzzles.  The good news is that you
+        get an easier time.  The bad news is that you don't score points
+        for those.
+
+        <h4 class='dusted'>Can I make my own boards?</h4>
+        Not yet...
+    </div>
+    <div class='modal-footer'>
+        <button class='btn btn-primary'
+                data-dismiss='modal'>Close</button>
+    </div>
+</div>
+
 {% endblock %}
 
-{% block tail_script %}
+{% block XXX_tail_script %}
 <script src='/static/site/puzzle.js'></script>
 <script>
 $(function()
@@ -42,6 +111,7 @@ $(function()
         var $body = $('.modal-body', $this)
         $body.empty()
         var $div = $('<div>').appendTo($body)
+        $('<div>').appendTo($div).addClass('score dotted alert')
         $('<div>').appendTo($div).addClass('btn-group palette')
         $('<div>').appendTo($div).addClass('playfield')
             .css('width', '320px').css('height', '320px')
