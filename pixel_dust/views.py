@@ -28,30 +28,49 @@ def home():
     return render_template('home.html')
 
 def puzzle_data(group, id):
+    puzzle = PuzzleSolution.query().filter(PuzzleSolution.name==id,
+                                           PuzzleSolution.group==group).get()
     if request.method == 'POST':
         form = request.form
-        width = int(form['width'])
-        name = form['name']
-        description = form['description']
+        width = height = int(form['size'])
+        hint = form['hint']
         colors = {}
         for color_code in form.getlist('color'):
             colors[color_code] = form['color-' + color_code]
-        return
+        pixels = []
+        for y in range(height):
+            row = ''
+            for x in range(width):
+                row += form['%d,%d' % (x, y)]
+            pixels.append(row)
 
-    if group == 'TEST':
-        puzzle = TEST_PUZZLES.get(id)
+        if puzzle is None:
+            puzzle = PuzzleSolution(group=group, name=id)
+        puzzle.width = width
+        puzzle.hint = hint
+        puzzle.author = users.get_current_user()
+        puzzle.data = json.dumps(
+        {
+            'colors': colors,
+            'pixels': pixels,
+        })
+        puzzle.put()
+        return redirect(request.referrer)
     else:
-        puzzle = None
-    if puzzle is None:
-        template = request.args.get('template')
-        if template is not None:
-            puzzle = TEMPLATES.get(template)
+        if puzzle is None:
+            if group == 'TEST':
+                puzzle = TEST_PUZZLES.get(id)
+            if puzzle is None:
+                template = request.args.get('template')
+                if template is not None:
+                    puzzle = TEMPLATES.get(template)
+                    puzzle.name = group + '/' + id
 
-    if 'application/json' in request.accept_mimetypes:
-        return json.dumps(puzzle.to_meta())
-    else:
-        return render_template('puzzle/view.html',
-                               puzzle=puzzle, group=group, id=id)
+        if 'application/json' in request.accept_mimetypes:
+            return json.dumps(puzzle.to_meta())
+        else:
+            return render_template('puzzle/view.html',
+                                   puzzle=puzzle, group=group, id=id)
 
 def puzzle_player(group, id):
     return render_template('puzzle/player.html',

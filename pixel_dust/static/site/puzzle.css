@@ -27,7 +27,7 @@
 {
     position: absolute;
     top: 0%;
-    visibility: hidden;
+    /*visibility: hidden; */
     z-index: 9999;
 }
 

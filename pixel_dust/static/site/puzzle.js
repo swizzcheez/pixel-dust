@@ -285,21 +285,15 @@
 
             // Convert colors into more easily digested form.
             $.each(data.colors,
-            function add_color(key)
+            function add_color(key, color)
             {
-                var r = this[0]
-                var g = this[1]
-                var b = this[2]
-                var rgb = jQuery.Color('rgb(' + r + ', ' + g + ', ' + b + ')')
+                var value = jQuery.Color(color)
                 var color =
                 {
                     index: self.colors.length,
-                    css: { 'background-color': rgb },
-                    rgb: rgb,
+                    css: { 'background-color': value },
+                    value: value,
                     code: key,
-                    r: r,
-                    g: g,
-                    b: b
                 }
                 color_key[key] = color
                 self.colors.push(color)
@@ -417,7 +411,7 @@
             $('<input type="hidden">')
                 .appendTo($this)
                 .attr('name', 'color-' + color.code)
-                .val(color.rgb.toHexString())
+                .val(color.value.toHexString())
             $btn.addClass('pixel-palette btn')
             $btn.attr('pixel-color', color.index)
             var $div = $('<div>').appendTo($btn)
@@ -460,12 +454,13 @@
                 function set_color(event, $dest)
                 {
                     $($dest).animate(current_color.css)
-                    $('input', $dest).val(color.code)
+                    $('input', $($dest)).val(current_color.code)
                 })
 
-                //$('[name=title]').val(solution.name)
-                //$('[name=description]').text(solution.description)
-                //$('[name=width]').val(solution.width)
+                console.log(solution)
+                $('[name=title]').val(solution.name)
+                $('[name=hint]').text(solution.hint)
+                $('[name=width]').val(solution.width)
             })
        
             var current_color

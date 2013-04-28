@@ -15,9 +15,9 @@ app.config.from_object('pixel_dust.settings')
 # Enable jinja2 loop controls extension
 app.jinja_env.add_extension('jinja2.ext.loopcontrols')
 
-@app.context_processor
-def inject_profiler():
-    return dict(profiler_includes=templatetags.profiler_includes())
+#@app.context_processor
+#def inject_profiler():
+#    return dict(profiler_includes=templatetags.profiler_includes())
 
 # Pull in URL dispatch routes
 import urls
@@ -30,5 +30,5 @@ if app.debug:
     app = DebuggedApplication(app, evalex=True)
 
 # GAE Mini Profiler (only enabled on dev server)
-app = profiler.ProfilerWSGIMiddleware(app)
+#app = profiler.ProfilerWSGIMiddleware(app)
 

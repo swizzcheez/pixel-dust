@@ -14,8 +14,9 @@ class PuzzleSolution(ndb.Model):
     Represents a puzzle solution.
     '''
 
+    group = ndb.StringProperty(required=True)
     name = ndb.StringProperty(required=True)
-    description = ndb.TextProperty(required=True)
+    hint = ndb.TextProperty()
     width = ndb.IntegerProperty(required=True)
     author = ndb.UserProperty()
     created = ndb.DateTimeProperty(auto_now_add=True)
@@ -23,13 +24,15 @@ class PuzzleSolution(ndb.Model):
     data = ndb.TextProperty(required=True)
 
     def to_meta(self):
+        created = self.created
+        updated = self.updated
         meta = {
             'name': self.name,
-            'description': self.description,
+            'hint': self.hint,
             'width': self.width,
             'author': self.author,
-            'created': self.created,
-            'updated': self.updated,
+            'created': str(created),
+            'updated': str(updated),
         }
         meta.update(json.loads(self.data))
         return meta
@@ -37,16 +40,16 @@ class PuzzleSolution(ndb.Model):
 TEMPLATES = dict(
     default = PuzzleSolution(
         name='default',
-        description='Generic default',
+        hint='Generic default',
         width=8,
         data=json.dumps({
             'colors':
             {
-                ' ': [ 0, 0, 0 ],
-                'R': [ 255, 0, 0 ],
-                'G': [ 0, 255, 0 ],
-                'B': [ 0, 0, 255 ],
-                'P': [ 255, 0, 255 ],
+                ' ': 'black',
+                'R': 'red',
+                'G': 'green',
+                'B': 'blue',
+                'P': 'purple',
             },
             'pixels':
             [
@@ -66,7 +69,7 @@ TEMPLATES = dict(
 TEST_PUZZLES = dict(
     square = PuzzleSolution(
         name='square',
-        description='A square',
+        hint='A square',
         width=8,
         data=json.dumps({
             'colors':
