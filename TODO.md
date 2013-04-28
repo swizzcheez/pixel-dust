@@ -8,6 +8,8 @@ TYPE | SEVERITY | ID | Summary
 ------|----|----|----
 FEAT | CRIT | Boards | Make >20 basic game boards
 FEAT | CRIT | SFRX | Add sfxr sounds to player actions
+FEAT | CRIT | Scoring | Add puzzle scoring
+FEAT | WANT | Shift-Mode | Add shift to hold back scoring
 ARCH | WANT | Design-Scoreboard | Design the scoreboard feature
 FEAT | WANT | Random-Board | Make board randomizer 
 FEAT | WANT | Musix | Add music track

@@ -447,7 +447,8 @@
             // Capture UI elements
             var $colors = $('.palette', $this)
             var $pixels = $('.pixel-grid', $this)
-            var $check = $('button', $this)
+            var $fill = $('.fill-btn', $this)
+            console.log($fill)
 
             // Go get that puzzle (solution)
             var solution = new PuzzleSolution()
@@ -469,10 +470,11 @@
                     default_color: solution.colors[0],
                 })
                 $pixels.bind('set_color',
-                function set_color(event, $dest)
+                function set_color(event, $dest, color)
                 {
-                    $($dest).animate(current_color.css)
-                    $('input', $($dest)).val(current_color.code)
+                    color = color || current_color
+                    $($dest).animate(color.css)
+                    $('input', $($dest)).val(color.code)
                 })
 
                 console.log(solution)
@@ -488,6 +490,15 @@
                 current_color = color
             }
 
+            function fill(color)
+            {
+                $pixels.trigger('fill', color)
+            }
+
+            $fill.click(function() 
+            { 
+                fill(current_color) 
+            })
     }
 
     plugin('edit_grid',
@@ -527,6 +538,16 @@
                 })($cell)
             }
         }
+
+        $this.bind('fill',
+        function(event, color)
+        {
+            $('td', $this).each( 
+            function () 
+            { 
+                $this.trigger('set_color', [$(this), color]) 
+            })
+        })
     })
 
     plugin('puzzle_player', puzzle_player, '.puzzle-player')
