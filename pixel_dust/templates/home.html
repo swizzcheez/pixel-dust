@@ -1,1 +1,53 @@
 {% extends "base.html" %}
+
+{% block style_block %}
+<style>
+@import url(/static/site/puzzle.css);
+</style>
+{% endblock %}
+
+{% block content %}
+<div class='dusted span6 offset3' style='text-align: center'>
+    <h1>Pixel Dust</h1>
+    <h2><a data-toggle='modal'
+           data-target='#random-player'
+           href='#'>Play Pixel Dust</a></h2>
+    <h2><a href='/scoreboard/'>Best Scores</a></h2>
+    <h2><a href='/help/instructions.html'>Instructions</a></h2>
+</div>
+
+<div id='random-player' class='modal hide fade'>
+    <div class='modal-body'>
+        <div class='puzzle-player' 
+            src='{{ url_for("puzzle_player", 
+                            group='basic',
+                            id='RANDOM')}}'>
+            <div class='btn-group palette'></div>
+            <div class='playfield'
+                style='width: 320px; height: 320px'></div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block tail_script %}
+<script src='/static/site/puzzle.js'></script>
+<script>
+$(function()
+{
+    $('#random-player').bind('show',
+    function()
+    {
+        var $this = $(this)
+        var $body = $('.modal-body', $this)
+        $body.empty()
+        var $div = $('<div>').appendTo($body)
+        $('<div>').appendTo($div).addClass('btn-group palette')
+        $('<div>').appendTo($div).addClass('playfield')
+            .css('width', '320px').css('height', '320px')
+        $div.attr('src', '/puzzle/basic/RANDOM?reduced=true')
+        $div.puzzle_player()
+    })
+})
+</script>
+{% endblock %}

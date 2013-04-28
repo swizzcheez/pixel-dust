@@ -1,0 +1,12 @@
+@font-face
+{
+    font-family: v5prc;
+    src: url('/static/font/V5PRD___.TTF'),
+         url('/static/font/V5PRD___.EOT');
+}
+
+.dusted
+{
+    font-family: v5prc;
+}
+

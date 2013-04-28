@@ -25,6 +25,32 @@
         }
     }
 
+    function setup_audio(base)
+    {
+        // IE sux...
+        try
+        {
+            var audio = new Audio(base + '.wav')
+            audio.load()
+            return audio
+        }
+        catch(e)
+        {
+            // If it didn't work, don't fret about it.  We just won't use
+            // sound.  IE8 and below for instance.
+            $.error(e)
+            return null;
+        }
+    }
+
+    function play(audio)
+    {
+        if (audio != null)
+        {
+            audio.play()
+        }
+    }
+
     function puzzle_player()
     {
         $(this).each(
@@ -38,6 +64,16 @@
             var $colors = $('.palette', $this)
             var $playfield = $('.playfield', $this)
             var $check = $('button', $this)
+
+            // Get and setup audio
+            var wrong_snd = setup_audio(
+                $this.attr('wrong') || '/static/sound/gulp')
+            var right_snd = setup_audio(
+                $this.attr('right') || '/static/sound/right')
+            var match_snd = setup_audio(
+                $this.attr('match') || '/static/sound/whip-whip')
+            var win_snd = setup_audio(
+                $this.attr('win') || '/static/sound/win')
 
             // Go get that puzzle (solution)
             var solution = new PuzzleSolution()
@@ -85,7 +121,7 @@
                         var choices = hist[0]
                         var correct = choices[Math.floor(Math.random() 
                                                          * choices.length)]
-                        
+            
                         // Create the div and position
 
                         var $div = $('<div>').appendTo($area)
@@ -168,6 +204,7 @@
 
                 if (right == 4)
                 {
+                    play(match_snd)
                     $split.children('.pixel-scoreboard').remove()
                     $split.children('.pixel').each(
                     function subsplit()
@@ -222,11 +259,27 @@
                 }
                 else
                 {
+                    // Better or worse than before?
                     var $scoreboard = $split.children('.pixel-scoreboard')
+                    var $right = $('.pixels-right', $scoreboard)
+                    var was_right = parseInt($right.html())
+                    var delta = right - was_right
+                    console.log(was_right, delta, $right, $right.html())
+                    if (delta > 0)
+                    {
+                        play(right_snd)
+                    }
+                    else
+                    {
+                        play(wrong_snd)
+                    }
+
                     $('.pixels-right', $scoreboard).html(right)
                     $('.pixels-wrong', $scoreboard).html(wrong)
                     $('.pixels-close', $scoreboard).html(close)
                 }
+
+                return right == 4
             }
 
             function game_finished()
@@ -237,6 +290,7 @@
                 var $ftr = $('<div>').appendTo($dialog).addClass('modal-footer')
 
                 $hdr.html('Congratulations!') 
+                play(win_snd)
 
                 var name = solution.name
                 var article
@@ -311,7 +365,7 @@
                     index: self.colors.length,
                     css: { 'background-color': value },
                     value: value,
-                    code: key,
+                    code: key
                 }
                 color_key[key] = color
                 self.colors.push(color)
@@ -467,7 +521,7 @@
                     width: solution.width,
                     height: solution.height,
                     src: solution.pixels,
-                    default_color: solution.colors[0],
+                    default_color: solution.colors[0]
                 })
                 $pixels.bind('set_color',
                 function set_color(event, $dest, color)
