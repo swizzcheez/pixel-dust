@@ -358,6 +358,8 @@
                         else
                         {
                             $pixel.attr('completed', 1)
+                            $pixel
+                                .css('cursor', 'default')
                             $pixel.css('border', 'solid 1px black')
                             while(true)
                             {
@@ -791,6 +793,8 @@
         var height = options.height
         var src = options.src
         var default_color = options.default_color
+
+        $('.pixel', $playfield).animate({ opacity: 1 })
 
         $this.empty()
         var $table = $('<table>').appendTo($this)
