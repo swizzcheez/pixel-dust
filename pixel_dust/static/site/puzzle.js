@@ -28,6 +28,11 @@
     function setup_audio(base)
     {
         // IE sux...
+        if (navigator.appName.indexOf("Internet Explorer") != -1)
+        {
+            return null;
+        }
+
         try
         {
             var audio = new Audio(base + '.wav')
@@ -260,7 +265,8 @@
 
                 color = color || current_color
                 $pixel = $($pixel)
-                $pixel.attr('pixel-color', color.index)
+                var index = color.index
+                $pixel.attr('pixel-color', index)
                 $pixel.animate(color.css)
                 if (check_solution($pixel.parent()) && running)
                 {

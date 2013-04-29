@@ -26,7 +26,7 @@ import json, random, time
 cache = Cache(app)
 
 def home():
-    return render_template('home.html')
+    return render_template('home.html', user=users.get_current_user())
 
 def puzzle_list(group):
     if request.method == 'POST':
