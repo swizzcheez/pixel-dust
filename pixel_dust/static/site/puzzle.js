@@ -96,7 +96,6 @@
 
             function get_score()
             {
-09:20 PM Cloning 71 static files.
                 return parseInt($score.text())
             }
 
