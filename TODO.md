@@ -6,14 +6,12 @@ Sunday Night (Final)
 
 TYPE | SEVERITY | ID | Summary
 ------|----|----|----
-FEAT | CRIT | Boards | Make >20 basic game boards
 FEAT | WANT | Puzzle-Crowd | Allow creation of puzzles by others
 FEAT | WANT | Editor-Bigger | Allow for 16x16 boads
 ARCH | WANT | Design-Scoreboard | Design the scoreboard feature
 FEAT | NICE | Musix | Add music track
 FEAT | NICE | Editor-Middle | Allow for 8x16 boards
 FEAT | NICE | Fractal-Board | Make fractal board generator
-FEAT | NICE | Procedural-Board | Make procedural board generator
 FEAT | NICE | Puzzle-Search | Create search for puzzles
 
 Unplanned

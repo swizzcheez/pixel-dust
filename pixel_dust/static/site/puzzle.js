@@ -77,7 +77,7 @@
             var STARTUP_GRACE_TIME = $this.attr('grace-time') || 3000
             var COMPLETE_BONUS = $this.attr('complete-bonus') || 50
             var TICK_SCORE_LOSS = $this.attr('tick-loss') || 1
-            var PUZZLE_COLOR_BASIS = $this.attr('puzzle-color-points') || 25
+            var PUZZLE_COLOR_BASIS = $this.attr('puzzle-color-points') || 100
             var WARN_TIME = $this.attr('warning-time') || 5000
             var TICK_TIME = $this.attr('tick-ms') || 100
 

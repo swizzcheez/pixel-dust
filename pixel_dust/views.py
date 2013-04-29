@@ -77,6 +77,8 @@ def puzzle_data(group, id):
         if puzzle is None:
             if group == 'TEST':
                 puzzle = TEST_PUZZLES.get(id)
+            if group == 'AUTO':
+                puzzle = PuzzleSolution.generate(id)
             if puzzle is None:
                 if id == 'RANDOM':
                     puzzle_ids = (PuzzleSolution

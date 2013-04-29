@@ -7,7 +7,7 @@ App Engine datastore models
 
 
 from google.appengine.ext import ndb
-import json
+import json, random
 
 class PuzzleSolution(ndb.Model):
     '''
@@ -22,6 +22,47 @@ class PuzzleSolution(ndb.Model):
     created = ndb.DateTimeProperty(auto_now_add=True)
     updated = ndb.DateTimeProperty(auto_now=True)
     data = ndb.TextProperty(required=True)
+
+    @classmethod
+    def generate(cls, id, size=8):
+        if id == 'RANDOM':
+            id = '%.6X' % int(random.random() * (1 << 24))
+        r = random.Random(id)
+        puzzle = cls(group='AUTO',
+                     name=id,
+                     width=size)
+        data = {}
+        data['colors'] = {
+            ' ': 'black',
+            'R': 'red',
+            'G': '#00FF00',
+            'B': 'blue',
+            'P': 'purple',
+            'Y': 'yellow',
+            'C': '#00FFFF',
+            'O': '#FF6600',
+            'W': 'white',
+        }
+        buf = []
+        ck = data['colors'].keys()
+        c = random.choice(ck)
+        for row in range(size):
+            buf.append([c]*size)
+        for n in range(int(r.random() * 5) + 3):
+            x0 = int(r.random() * size * 2) - size / 2
+            y0 = int(r.random() * size * 2) - size / 2
+            w = int(r.random() * size) + 1
+            h = int(r.random() * size) + 1
+            c = random.choice(ck)
+            for y in range(y0, y0 + h):
+                for x in range(x0, x0 + h):
+                    if (x >= 0 and y >= 0 and x < size and y < size):
+                        buf[y][x] = c
+        data['pixels'] = [
+            ''.join(row) for row in buf
+        ]
+        puzzle.data = json.dumps(data)
+        return puzzle
 
     def to_meta(self, reduced=False):
         created = self.created
