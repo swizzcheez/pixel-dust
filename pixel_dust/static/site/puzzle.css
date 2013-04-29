@@ -41,3 +41,8 @@
     z-index: 10;
 }
 
+.pixel[complete]:hover
+{
+    border-color: inherit;
+    z-index: 0;
+}

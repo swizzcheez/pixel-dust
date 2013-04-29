@@ -280,7 +280,9 @@
                 $pixel.animate(color.css)
                 if (check_solution($pixel.parent()) && running)
                 {
-                    adjust_score(COMPLETE_BONUS)
+                    var mult = Solution.keys(solution.colors).length
+                    mult = Math.max(1, mult - 2)
+                    adjust_score(COMPLETE_BONUS * mult)
                 }
             }
 
