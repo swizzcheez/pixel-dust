@@ -77,9 +77,11 @@
             var STARTUP_GRACE_TIME = $this.attr('grace-time') || 3000
             var COMPLETE_BONUS = $this.attr('complete-bonus') || 50
             var TICK_SCORE_LOSS = $this.attr('tick-loss') || 1
-            var PUZZLE_COLOR_BASIS = $this.attr('puzzle-color-points') || 100
+            var PUZZLE_COLOR_BASIS = $this.attr('puzzle-color-points') || 150
             var WARN_TIME = $this.attr('warning-time') || 5000
             var TICK_TIME = $this.attr('tick-ms') || 100
+            var CHANGE_COST = $this.attr('change-cost') || 10
+            var CHANGE_GRACE = $this.attr('change-grace') || 1
 
             function adjust_score(delta)
             {
@@ -267,6 +269,14 @@
                 $pixel = $($pixel)
                 var index = color.index
                 $pixel.attr('pixel-color', index)
+                var changed = $pixel.attr('changed') || 0
+                changed++
+                $pixel.attr('changed', changed)
+                changed -= CHANGE_GRACE
+                if (changed > 0)
+                {
+                    adjust_score(-changed * CHANGE_COST)
+                }
                 $pixel.animate(color.css)
                 if (check_solution($pixel.parent()) && running)
                 {

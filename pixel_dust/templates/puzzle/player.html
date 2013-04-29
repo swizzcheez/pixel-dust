@@ -27,7 +27,7 @@
             <span>
                 <a href='/'>Pixel Dust</a>
             </span>
-            <span class='pull-right span3'>
+            <span class='pull-right span4'>
                 Score: <span class='score'></span>
             </span>
         </h2>
@@ -40,6 +40,37 @@
                        margin-right: auto;
                        width: 320px; height: 320px'></div>
         </div>
+    </div>
+
+</div>
+
+<div class='row'>
+    <br>
+    <br>
+    <div class='well span8 offset2'>
+        <h4>Summary:</h4>
+        Discover picture by solving 2x2 groups of pixels.  Select a color
+        at the top with your mouse or use your number keys.  Click on
+        pixels to change their color.  The three numbers hovering above a
+        group mean:
+
+        <div class='alert alert-success'>
+            Number of pixels of the right color in the right place</div>
+
+        <div class='alert alert-warning'>
+            Numbner of pixels of the right color in the wrong place</div>
+
+        <div class='alert alert-error'>
+            Number of pixels of the wrong color</div>
+
+        Once each puzzle is complete, smaller ones appear until the picture
+        is entirely solved or your score runs out.
+    </div>
+</div>
+
+<div>
+    <div style='text-align: center'>
+        <a class='btn btn-warning' href='/'>Back to Main Menu</a>
     </div>
 </div>
 {% endblock %}
