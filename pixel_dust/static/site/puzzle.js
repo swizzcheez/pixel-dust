@@ -77,7 +77,7 @@
             var STARTUP_GRACE_TIME = $this.attr('grace-time') || 3000
             var COMPLETE_BONUS = $this.attr('complete-bonus') || 50
             var TICK_SCORE_LOSS = $this.attr('tick-loss') || 1
-            var PUZZLE_COLOR_BASIS = $this.attr('puzzle-color-points') || 150
+            var PUZZLE_COLOR_BASIS = $this.attr('puzzle-color-points') || 75
             var WARN_TIME = $this.attr('warning-time') || 5000
             var TICK_TIME = $this.attr('tick-ms') || 100
             var CHANGE_COST = $this.attr('change-cost') || 10
@@ -96,6 +96,7 @@
 
             function get_score()
             {
+09:20 PM Cloning 71 static files.
                 return parseInt($score.text())
             }
 
@@ -118,6 +119,7 @@
             solution.load(url,
             function start_puzzle(solution)
             {
+09:20 PM Cloning 71 static files.
                 // Reset and populate components
                 $playfield.empty()
 
