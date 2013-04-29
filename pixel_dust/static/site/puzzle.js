@@ -118,7 +118,6 @@
             solution.load(url,
             function start_puzzle(solution)
             {
-09:20 PM Cloning 71 static files.
                 // Reset and populate components
                 $playfield.empty()
 
