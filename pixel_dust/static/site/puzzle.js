@@ -875,6 +875,8 @@
     function notice(options, $source)
     {
         var $this = $(this)
+        // Disabling this as it might be considered a "feature" and it was
+        // added to help illustrate the scores.
         //$this.appendTo($('body'))
         var $source = $source || options.$source
         var pos = $source.offset()
