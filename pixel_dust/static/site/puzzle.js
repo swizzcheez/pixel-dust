@@ -272,12 +272,16 @@
                 if ($pixel.attr('pixel-color') != index)
                 {
                     $pixel.attr('pixel-color', index)
-                    var changed = $pixel.attr('changed') || 0
-                    changed++
-                    $pixel.attr('changed', changed)
-                    changed -= CHANGE_GRACE
+                    // Get change count from parent pixel, if one exists.
+                    // Otherwise, use the playfield (outer layer)
+                    var $counter = $pixel.parent().closest('.pixel')
+                    $counter = $counter.size() ? $counter : $playfield
+                    var changed = $counter.attr('changed') || 0
                     if ($pixel.attr('correct') != index)
                     {
+                        changed++
+                        $counter.attr('changed', changed)
+                        changed -= CHANGE_GRACE
                         if (changed > 0)
                         {
                             //var cost = changed * CHANGE_COST
@@ -286,14 +290,14 @@
                             var $note = $('<span>')
                                 .addClass('badge badge-important')
                                 .text('Extra Change: -' + cost)
-                                .notice({}, $score)
+                                .notice({}, $pixel)
                         }
                         else
                         {
                             var $note = $('<span>')
                                 .addClass('badge')
-                                .text(-changed + ' Free Changes Remain')
-                                .notice({}, $score)
+                                .text('Free Changes: ' + -changed)
+                                .notice({}, $pixel)
                             $note.addClass(changed < 0 ? 'badge-success' 
                                                        : 'badge-warning')
                         }
@@ -307,8 +311,8 @@
                         adjust_score(bonus)
                         var $note = $('<span>')
                             .addClass('badge badge-success')
-                            .text(bonus + ' Complete Bonus')
-                            .notice({}, $score)
+                            .text('Complete Bonus: ' + bonus)
+                            .notice({}, $pixel)
                     }
                 }
             }
