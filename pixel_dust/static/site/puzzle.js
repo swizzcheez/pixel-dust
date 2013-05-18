@@ -290,14 +290,14 @@
                             var $note = $('<span>')
                                 .addClass('badge badge-important')
                                 .text('Extra Change: -' + cost)
-                                .notice({}, $pixel)
+                                .notice({}, $score)
                         }
                         else
                         {
                             var $note = $('<span>')
                                 .addClass('badge')
                                 .text('Free Changes: ' + -changed)
-                                .notice({}, $pixel)
+                                .notice({}, $score)
                             $note.addClass(changed < 0 ? 'badge-success' 
                                                        : 'badge-warning')
                         }
@@ -312,7 +312,7 @@
                         var $note = $('<span>')
                             .addClass('badge badge-success')
                             .text('Complete Bonus: ' + bonus)
-                            .notice({}, $pixel)
+                            .notice({}, $score)
                     }
                 }
             }
