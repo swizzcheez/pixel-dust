@@ -81,7 +81,7 @@
             var WARN_TIME = $this.attr('warning-time') || 5000
             var TICK_TIME = $this.attr('tick-ms') || 100
             var CHANGE_COST = $this.attr('change-cost') || 10
-            var CHANGE_GRACE = $this.attr('change-grace') || 1
+            var CHANGE_GRACE = $this.attr('change-grace')
 
             function adjust_score(delta)
             {
@@ -122,6 +122,7 @@
                 $playfield.empty()
 
                 $colors.puzzle_palette(solution.colors)
+                CHANGE_GRACE = Object.keys(solution.colors).length - 1
                 $colors.bind('color', 
                              function(event, color) { select_palette(color) })
 
@@ -268,21 +269,47 @@
                 color = color || current_color
                 $pixel = $($pixel)
                 var index = color.index
-                $pixel.attr('pixel-color', index)
-                var changed = $pixel.attr('changed') || 0
-                changed++
-                $pixel.attr('changed', changed)
-                changed -= CHANGE_GRACE
-                if (changed > 0)
+                if ($pixel.attr('pixel-color') != index)
                 {
-                    adjust_score(-changed * CHANGE_COST)
-                }
-                $pixel.animate(color.css)
-                if (check_solution($pixel.parent()) && running)
-                {
-                    var mult = Solution.keys(solution.colors).length
-                    mult = Math.max(1, mult - 2)
-                    adjust_score(COMPLETE_BONUS * mult)
+                    $pixel.attr('pixel-color', index)
+                    var changed = $pixel.attr('changed') || 0
+                    changed++
+                    $pixel.attr('changed', changed)
+                    changed -= CHANGE_GRACE
+                    if ($pixel.attr('correct') != index)
+                    {
+                        if (changed > 0)
+                        {
+                            //var cost = changed * CHANGE_COST
+                            var cost = changed * CHANGE_COST
+                            adjust_score(-cost)
+                            var $note = $('<span>')
+                                .addClass('badge badge-important')
+                                .text('Extra Change: -' + cost)
+                                .notice({}, $score)
+                        }
+                        else
+                        {
+                            var $note = $('<span>')
+                                .addClass('badge')
+                                .text(-changed + ' Free Changes Remain')
+                                .notice({}, $score)
+                            $note.addClass(changed < 0 ? 'badge-success' 
+                                                       : 'badge-warning')
+                        }
+                    }
+                    $pixel.animate(color.css)
+                    if (check_solution($pixel.parent()) && running)
+                    {
+                        var mult = Object.keys(solution.colors).length
+                        mult = Math.max(1, mult - 2)
+                        var bonus = COMPLETE_BONUS * mult
+                        adjust_score(bonus)
+                        var $note = $('<span>')
+                            .addClass('badge badge-success')
+                            .text(bonus + ' Complete Bonus')
+                            .notice({}, $score)
+                    }
                 }
             }
 
@@ -358,9 +385,9 @@
                         else
                         {
                             $pixel.attr('completed', 1)
-                            $pixel
-                                .css('cursor', 'default')
-                            $pixel.css('border', 'solid 1px black')
+                            $pixel.css('cursor', 'default')
+                            $pixel.css('border', 'solid 1px ' 
+                                                 + color.value.toHexString())
                             while(true)
                             {
                                 var complete = 0
@@ -794,6 +821,7 @@
         var src = options.src
         var default_color = options.default_color
 
+        var $playfield = $('.playfield', $this)
         $('.pixel', $playfield).animate({ opacity: 1 })
 
         $this.empty()
@@ -838,5 +866,30 @@
 
     plugin('puzzle_player', puzzle_player, '.puzzle-player')
     plugin('puzzle_editor', puzzle_editor, '.puzzle-editor')
+
+    plugin('notice',
+    function notice(options, $source)
+    {
+        var $this = $(this)
+        $this.appendTo($('body'))
+        var $source = $source || options.$source
+        var pos = $source.offset()
+        var left = options.left || pos.left
+        var top = options.top || pos.top
+        left += $source.outerWidth() / 2 - $this.innerWidth() / 2
+        top += $source.outerHeight() / 2 - $this.innerHeight() / 2
+        var css = 
+        {
+            position: 'fixed',
+            left: left,
+            top: top,
+            'z-index': 99999,
+        }
+        $this.css(css)
+            .delay(500)
+            .animate({ top: top - 50,
+                       opacity: 0 })
+        return $this
+    })
 })(jQuery);
 
